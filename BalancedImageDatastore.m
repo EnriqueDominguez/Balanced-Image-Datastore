@@ -11,7 +11,8 @@
 
 %   See also ImageDatastore
 
-%   Copyright 2020 - Enrique Dominguez
+%   Author: Enrique Dominguez
+%     Date: April 2020 (v1.0)
 
 classdef BalancedImageDatastore < ...
         matlab.io.Datastore &...
