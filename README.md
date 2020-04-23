@@ -6,13 +6,13 @@ Use a BalancedImageDatastore object to manage a balanced collection of image fil
 The balanced datastore of image files is created by duplicating the lowest ocurence images from the original image datastore. The new datastore will be composed by *nClasses* \* *maxOccur* observations, where *nClasses* if the number of distinct labels of the original image datastore and *maxOccur* is the count of the most sampled label.
 
 ## Syntax ##
-`>> balds = BalancedImageDatastore(imds)`
+> `>> balds = BalancedImageDatastore(imds)`
 
 Input Arguments: 
-> `imds` an ImageDatastore object, containing the original image files labelled
+* `imds` an ImageDatastore object, containing the original image files labelled
 
 Output:
-> `balds` a BalancedImageDatastore object
+* `balds` a BalancedImageDatastore object
 
 See also [ImageDatastore](https://www.mathworks.com/help/matlab/ref/matlab.io.datastore.imagedatastore.html)
 
