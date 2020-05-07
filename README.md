@@ -42,4 +42,5 @@ The following code shows how to create two balanced datasets (80% for training a
 ```
 ### Requirements ###
 Compatible with R2019a
+
 Note that the original image datastore must be labelled
