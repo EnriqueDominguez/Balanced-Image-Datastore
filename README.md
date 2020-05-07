@@ -41,6 +41,5 @@ The following code shows how to create two balanced datasets (80% for training a
 >> [train, test] = balds.transform ( @(z,i) imrotate(z,i.Duplicate.*10), 'IncludeInfo',true).splitEachLabel(.8);
 ```
 ### Requirements ###
-Compatible with R2019a
-
+Compatible with R2019a  
 Note that the original image datastore must be labelled
