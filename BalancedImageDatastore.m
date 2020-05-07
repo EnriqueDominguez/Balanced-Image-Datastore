@@ -1,18 +1,59 @@
 % BALANCEDIMAGEDATASTORE Balanced datastore for a collection of image files
 %
-%   Usage: BALDS = BalancedImageDatastore(IMDS)
+%   BALDS = BalancedImageDatastore(IMDS) creates a BalancedImageDatastore
+%   from the given ImageDatastore IMDS
 %
-%   Imputs:
-%       IMDS.....Image datastore
 %
-%   Outputs:
-%       BALDS....Balanced datasotre of images
+%   PROPERTIES:
+%       
+%       Duplicates               - Repetition index for each image
+%                                  Duplicates(i) == 0 means the image i is original
+%                                  Duplicates(i) == k means the image i is the k-th repetition
+%       AlternateFileSystemRoots - Alternate file system root paths for the Files.
+%       ReadSize                 - Upper limit on the number of images returned by the read method.
+%       Labels                   - A set of labels for images.
+%       NumObservations          - Total number of provided images by the datastore
+%                                  NumObservations = NumFiles + NumDuplicates
+%       NumFiles                 - Number of image files
+%       NumDuplicates            - Number of duplicate images
 %
-
+%   METHODS:
+%
+%       hasdata        - Returns true if there is more data in the datastore
+%       read           - Reads the next consecutive file
+%       reset          - Resets the datastore to the start of the data
+%       preview        - Reads the first image from the datastore
+%       readall        - Reads all image files from the datastore
+%       partition      - Returns a new datastore that represents a single
+%                        partitioned portion of the original datastore
+%       numpartitions  - Returns an estimate for a reasonable number of
+%                        partitions to use with the partition function,
+%                        according to the total data size
+%       splitEachLabel - Splits the ImageDatastore labels according to the
+%                        specified proportions, which can be represented as
+%                        percentages or number of files.
+%       countEachLabel - Counts the number of unique labels in the datastore
+%       shuffle        - Shuffles the files of datastore using randperm
+%       transform      - Creates an altered form of the current datastore by
+%                        specifying a function handle that will execute
+%                        after read on the current datastore.
+%       combine        - Creates a new datastore that horizontally
+%                        concatenates the result of read from two or more
+%                        input datastores.
+%
+%   Example:
+%   --------
+%   % Creates two balanced image datasets (80% for training and 20% for test)
+%   % where the duplicate images are rotated 10x grades
+%   balds = BalancedImageDatastore( ...
+%               imageDatastore(dataroot, 'IncludeSubfolders',true, 'LabelSource','foldernames') );
+%   [trainds, testds] = balds.transform( ...
+%               @(z,i) imrotate(z, i.Duplicate*10), 'IncludeInfo',true ).splitEachLabel(.8);
+%   
 %   See also ImageDatastore
 
 %   Author: Enrique Dominguez
-%     Date: April 2020 (v1.0)
+%     Date: May 2020 (v1.0)
 
 classdef BalancedImageDatastore < ...
         matlab.io.Datastore &...
@@ -55,9 +96,9 @@ classdef BalancedImageDatastore < ...
     end
     
     methods
-        % BalancedImageDatastore is constructed from the provided 
-        % ImageDatastoreby by duplicating the lower occurrence image files
-        % in order to obtain an equally number of ocurrences for each label
+        % BalancedImageDatastore is constructed from an ImageDatastore by 
+        % replicating the lower occurrence image files in order to obtain
+        % an equally number of ocurrences for each label
         function self = BalancedImageDatastore(imds)
             
             if ~isa(imds, 'matlab.io.datastore.ImageDatastore')
