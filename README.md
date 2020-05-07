@@ -17,7 +17,7 @@ Output:
 See also [ImageDatastore](https://www.mathworks.com/help/matlab/ref/matlab.io.datastore.imagedatastore.html)
 
 ## Properties ##
-* `Duplicates` Array of integer, which indicate the number of repetition for the file in the image datastore. `Duplicates(i)==0`when the image *i* is original. `Duplicates(i)==k` when the image *i* is the *k*-th repetition. This information is also included in the structure returned by the `read` method
+* `Duplicates` Array of integer, which indicate the number of replication for the file in the image datastore. `Duplicates(i)==0`when the image *i* is original. `Duplicates(i)==k` when the image *i* is the *k*-th repetition. This information is also included in the structure returned by the `read` method
 * `AlternateFileSystemRoots` Alternative file system root path  for the files
 * `ReadSize` Upper limit on the number of images returned by the read method
 * `NumObservations` Total number of provided images by the datastore. `NumObservtions == NumFiles + NumDuplicates`
@@ -34,5 +34,12 @@ See also [ImageDatastore](https://www.mathworks.com/help/matlab/ref/matlab.io.da
 * `splitEachLabel` Split datastore by proportions
 * `countEachLabel` Count image files and their duplicates in datastore
 
+## Example ##
+The following code shows how to create two balanced datasets (80% for training and 20% for testing). Note that the replicated images are rotated 10x grades acording to the replication index
+```
+>> balds = BalancedImageDatastore( imageDatastore(dataroot, 'IncludeSubfolders',true, 'LabelSource','foldernames') );
+>> [train, test] = balds.transform ( @(z,i) imrotate(z,i.Duplicate.*10), 'IncludeInfo',true).splitEachLabel(.8);
+```
 ### Requirements ###
-The original image datastore must be labelled
+Compatible with R2019a
+Note that the original image datastore must be labelled
